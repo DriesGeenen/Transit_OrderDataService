@@ -1,7 +1,7 @@
 {
-  "name": "eCmrService",
+  "name": "OrderDataService",
   "version": "1.0.0",
-  "description": "Proof-of-concept e-CMR service for Agilians",
+  "description": "Proof-of-concept dummy order data service for Agilians",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,7 +16,10 @@
     "mongoose": "*",
     "multer": "^1.3.0",
     "passport": "*",
-    "passport-jwt": "*"
+    "passport-jwt": "*",
+    "promise": "^8.0.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
   },
   "author": "Transit",
   "license": "ISC"

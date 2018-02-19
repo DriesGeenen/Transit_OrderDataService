@@ -1,43 +1,34 @@
 const mongoose = require('mongoose');
+const Contact = require('./contact');
 
 const orderDataSchema = mongoose.Schema({
-    email : {
-        type: String,
-        unique: true,
-        required: true
-    },
-    address : {
-        type: String,
-        required: true
-    },
-    postal: {
-        type: String,
-        required: true
-    },
-    city: {
-        type: String,
-        required: true
-    },
-    company: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
-    firstName: {
-        type: String,
-        required: true
-    },
-    telephone: {
-        type: String,
-        required: true
-    },
-    goods: {
-        type: [String],
-        required: true
+    sender: Contact,
+    receiver: Contact,
+    products: [{
+        amount: Number,
+        productCode: String,
+        status:{
+            type: String,
+            enum: ['ready', 'processing', 'done'],
+            default: 'ready',
+            required: true
+        }
+    }],
+    orderDate:{
+        type: Date,
+        default: new Date()
     }
+
+}, { toJSON: { virtuals: true } });
+
+orderDataSchema.virtual('goods', {
+    ref: 'ProductData', // The model to use
+    localField: 'products.productCode', // Find people where `localField`
+    foreignField: 'productCode', // is equal to `foreignField`
+    // If `justOne` is true, 'members' will be a single doc as opposed to
+    // an array. `justOne` is false by default.
+    justOne: false
 });
+
 
 const OrderData = module.exports = mongoose.model('OrderData', orderDataSchema);

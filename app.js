@@ -4,8 +4,10 @@ const mongoose = require('mongoose');
 const config = require('./config/config');
 const app = express();
 var router = express.Router();
-const orderData = require('./models/orderData'); //created models loading here
+const Order = require('./models/orderData');
+const Products = require('./models/productData');
 const orderDataRoutes = require('./routes/orderDataRoutes');
+const productDataRoutes = require('./routes/productDataRoutes');
 const jsonwebtoken = require("jsonwebtoken");
 const cors = require('cors');
 
@@ -23,7 +25,6 @@ mongoose.connection.on('error', function (err) {
 });
 
 app.use(function (req, res, next) {
-    console.log(req.headers);
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
         jsonwebtoken.verify(req.headers.authorization.split(' ')[1], config.secret, function (err, decode) {
             if (err) req.user = undefined;
@@ -41,6 +42,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 orderDataRoutes(app);
+productDataRoutes(app);
 
 //index route
 router.get('/', function (req, res) {
