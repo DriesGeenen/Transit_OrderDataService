@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function (app) {
-    var OrderDataController = require('../controllers/orderDataController');
-    var AuthHelper = require('../helpers/authHelper');
+    const OrderDataController = require('../controllers/orderDataController');
+    const AuthHelper = require('../helpers/authHelper');
 
     app.route('/orders')
         .get(OrderDataController.getAllOrders)

@@ -24,7 +24,7 @@ exports.deleteOrder = function (id) {
 };
 
 exports.getOrderByProductCodeWithAmount = function (productCode, amount) {
-    // todo uncomment this after testing
+    // todo uncomment this after the demo
     /*return Order
         .findOneAndUpdate(
             {products: {$elemMatch: {productCode: productCode, amount: {$lte: amount}, status: 'ready'}}},
@@ -33,10 +33,17 @@ exports.getOrderByProductCodeWithAmount = function (productCode, amount) {
         .populate('goods')
         .sort('orderDate');*/
 
-    return Order
+    /*return Order
         .findOne(
             {products: {$elemMatch: {productCode: productCode, amount: {$lte: amount}, status: 'ready'}}},
             {products: {$elemMatch: {productCode: productCode}}})
+        .populate('goods')
+        .sort('orderDate');*/
+
+    return Order
+        .findOne(
+            {products: {$elemMatch: {productCode: productCode, amount: {$lte: amount}, status: 'ready'}}},
+            {products: {$elemMatch: {productCode: productCode}}, sender: 1, receiver: 1, orderDate: 1})
         .populate('goods')
         .sort('orderDate');
 };

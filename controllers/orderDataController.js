@@ -1,10 +1,10 @@
 'use strict';
 
-var OrderRepository = require('../repositories/orderDataRepository');
-var Order = require('../models/orderData');
+const OrderRepository = require('../repositories/orderDataRepository');
+const Order = require('../models/orderData');
 
 exports.getAllOrders = function (req, res) {
-    var promise = OrderRepository.getAllOrders();
+    const promise = OrderRepository.getAllOrders();
     promise.then(function (orders) {
         filterProductsFromOrders(orders);
         return res.json({success: true, data: orders});
@@ -14,10 +14,10 @@ exports.getAllOrders = function (req, res) {
 };
 
 exports.addOrder = function (req, res) {
-    var newOrder = new Order(req.body);
-    var promise = OrderRepository.addOrder(newOrder);
+    const newOrder = new Order(req.body);
+    const promise = OrderRepository.addOrder(newOrder);
     promise.then(function (order) {
-        filterProductsFromOrder(order);
+        //filterProductsFromOrder(order);
         return res.json({success: true, msg: 'Order created', data: order});
     }, function (err) {
         return res.status(500).json({success: false, msg: 'Failed to create order', error: err});
@@ -25,7 +25,7 @@ exports.addOrder = function (req, res) {
 };
 
 exports.updateOrder = function (req, res) {
-    var promise = OrderRepository.updateOrder(req.params.id, req.body);
+    const promise = OrderRepository.updateOrder(req.params.id, req.body);
     promise.then(function () {
         return res.json({success: true, msg: 'Order updated'});
     }, function (err) {
@@ -34,7 +34,7 @@ exports.updateOrder = function (req, res) {
 };
 
 exports.getOrderById = function (req, res) {
-    var promise = OrderRepository.getOrderById(req.params.id);
+    const promise = OrderRepository.getOrderById(req.params.id);
     promise.then(function (order) {
         filterProductsFromOrder(order);
         return res.json({success: true, data: order});
@@ -44,7 +44,7 @@ exports.getOrderById = function (req, res) {
 };
 
 exports.deleteOrder = function (req, res) {
-    var promise = OrderRepository.deleteOrder(req.params.id);
+    const promise = OrderRepository.deleteOrder(req.params.id);
     promise.then(function () {
         return res.json({success: true, msg: 'Order removed'});
     }, function (err) {
@@ -54,9 +54,9 @@ exports.deleteOrder = function (req, res) {
 
 exports.getOrdersByProductCodeWithAmountArray = function (req, res) {
     // If config is an array of queries
-    var productCodesWithAmount = req.body;
+    const productCodesWithAmount = req.body;
     // Array of results
-    var orders = [];
+    const orders = [];
 
     processQueries(productCodesWithAmount);
     function processQueries(productCodesWithAmount) {
@@ -65,10 +65,10 @@ exports.getOrdersByProductCodeWithAmountArray = function (req, res) {
             return res.json({success: true, data: mergeOrdersByMatchingId(orders)});
         }
 
-        var amount = productCodesWithAmount[0].amount;
-        var productCode = productCodesWithAmount[0].productCode;
+        const amount = productCodesWithAmount[0].amount;
+        const productCode = productCodesWithAmount[0].productCode;
 
-        var promise = OrderRepository.getOrderByProductCodeWithAmount(productCode, amount);
+        const promise = OrderRepository.getOrderByProductCodeWithAmount(productCode, amount);
         promise.then(function (order) {
             if(order){
                 filterProductsFromOrder(order);
@@ -83,6 +83,7 @@ exports.getOrdersByProductCodeWithAmountArray = function (req, res) {
 
             processQueries(productCodesWithAmount);
         }, function (err) {
+            console.log(err);
             return res.status(500).json({
                 success: false,
                 msg: 'Failed to get orders by productcode with amount',
@@ -94,10 +95,10 @@ exports.getOrdersByProductCodeWithAmountArray = function (req, res) {
 };
 
 /*exports.getOrderByProductCodeWithAmount = function (req, res) {
-    var productCode = req.params.productcode;
-    var amount = req.params.amount;
+    const productCode = req.params.productcode;
+    const amount = req.params.amount;
 
-    var promise = OrderRepository.getOrderByProductCodeWithAmount(productCode, amount);
+    const promise = OrderRepository.getOrderByProductCodeWithAmount(productCode, amount);
     promise.then(function (order) {
         filterProductsFromOrder(orders);
         return res.json({success: true, data: order});
@@ -111,20 +112,20 @@ exports.getOrdersByProductCodeWithAmountArray = function (req, res) {
 };*/
 
 const filterProductsFromOrders = function (orders) {
-    for (var i = 0; i < orders.length; i++) {
+    for (let i = 0; i < orders.length; i++) {
         filterProductsFromOrder(orders[i]);
     }
 };
 
 const filterProductsFromOrder = function (order) {
-    for (var j = 0; j < order.products.length; j++) {
-        order.goods[j].amount = order.products[j].amount;
+    for (let i = 0; i < order.products.length; i++) {
+        order.goods[i].amount = order.products[i].amount;
     }
     order.products = undefined;
 };
 
 const compareResultAndUpdateArray = function (productCodesWithAmount, order) {
-    for (var i = 0; i < order.goods.length; i++) {
+    for (let i = 0; i < order.goods.length; i++) {
         if (order.goods[i].productCode === productCodesWithAmount[0].productCode) {
             // If amount is the same, element is removed from the search array
             if (order.goods[i].amount === productCodesWithAmount[0].amount) {
@@ -136,8 +137,8 @@ const compareResultAndUpdateArray = function (productCodesWithAmount, order) {
 };
 
 const mergeOrdersByMatchingId = function (orders) {
-    var mergedOrders = {};
-    for (var i = 0; i < orders.length; i++) {
+    const mergedOrders = {};
+    for (let i = 0; i < orders.length; i++) {
         if(mergedOrders[orders[i]._id])
             mergedOrders[orders[i]._id].goods = mergedOrders[orders[i]._id].goods.concat(orders[i].goods);
         else mergedOrders[orders[i]._id] = orders[i];
